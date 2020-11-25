@@ -1,0 +1,59 @@
+version: "3.5"
+
+services:
+  php74:
+    container_name: php_epm_server
+    build:
+      context: ./
+      dockerfile: ./php/Dockerfile
+    #restart: always
+    networks:
+      - network_3
+    ports:
+      - "8098:80"
+    volumes:
+      - ./www:/var/www/html/
+
+  Mariadb_2:
+    container_name: Mariadb_epm_server
+    image: mariadb
+    #restart: always
+    networks:
+      - network_3
+    ports:
+      - "3309:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: "myuser"
+      MYSQL_PASSWORD: "mypassword"
+    volumes:
+      - ./database:/var/lib/mysql
+
+  phpmyadmin_1:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin_epm_server
+    depends_on:
+      - Mariadb_2
+    environment:
+      - PMA_ARBITRARY=1
+      - TESTSUITE_PASSWORD=root
+      - PMA_PORT=3309
+    #restart: always
+    ports:
+      - "8097:80"
+    networks:
+      - network_3
+    volumes:
+      - /sessions
+
+  # composer:
+  #   restart: always
+  #   image: composer/composer:php7
+  #   command: install
+  #   networks:
+  #     - dev_network_1
+  #   volumes:
+  #     - ./www:/var/www/html/
+
+networks:
+  network_3:
