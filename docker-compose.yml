@@ -2,24 +2,22 @@ version: "3.5"
 
 services:
   php74:
-    container_name: php_epm_server
-    build:
-      context: ./
-      dockerfile: ./php/Dockerfile
+    container_name: php
+    image: moonoise/php74_pdo_oci
     #restart: always
     networks:
-      - network_3
+      - network_1
     ports:
       - "8098:80"
     volumes:
       - ./www:/var/www/html/
 
-  Mariadb_2:
-    container_name: Mariadb_epm_server
+  Mariadb_1:
+    container_name: Mariadb
     image: mariadb
     #restart: always
     networks:
-      - network_3
+      - network_1
     ports:
       - "3309:3306"
     environment:
@@ -31,29 +29,21 @@ services:
 
   phpmyadmin_1:
     image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin_epm_server
+    container_name: phpmyadmin
     depends_on:
-      - Mariadb_2
+      - Mariadb_1
     environment:
       - PMA_ARBITRARY=1
       - TESTSUITE_PASSWORD=root
       - PMA_PORT=3309
+      - UPLOAD_LIMIT= 3000000000
     #restart: always
     ports:
       - "8097:80"
     networks:
-      - network_3
+      - network_1
     volumes:
       - /sessions
 
-  # composer:
-  #   restart: always
-  #   image: composer/composer:php7
-  #   command: install
-  #   networks:
-  #     - dev_network_1
-  #   volumes:
-  #     - ./www:/var/www/html/
-
 networks:
-  network_3:
+  network_1:
