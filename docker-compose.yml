@@ -13,7 +13,7 @@ services:
       - ./www:/var/www/html/
 
   Mariadb_1:
-    container_name: Mariadb
+    container_name: mariadb
     image: mariadb
     #restart: always
     networks:
